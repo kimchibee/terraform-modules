@@ -1,123 +1,66 @@
-# terraform_modules
+# Terraform Modules 가이드
 
-terraform-infra 저장소에서 **공통으로 사용하는 재사용 가능한 Terraform 모듈**을 관리하는 라이브러리입니다.
+이 디렉터리는 **재사용 가능한 공통 Terraform 모듈**을 포함합니다.
 
-이 저장소는 **실제 인프라를 직접 생성하지 않습니다.**  
-Azure 리소스 생성과 상태(State) 관리는 **terraform-infra**(또는 `terraform_iac`)에서 수행합니다.
+## 모듈 목록
 
----
+현재 사용 가능한 모듈:
 
-## 목표
+### 네트워킹
+- `hub-vnet` - Hub VNet (VPN Gateway, DNS Resolver, Private DNS Zones 포함)
+- `spoke-vnet` - Spoke VNet (VNet Peering 포함)
+- `vnet` - 단순 VNet (서브넷만 포함)
+- `vnet-peering` - VNet Peering
 
-| 목표 | 설명 |
-|------|------|
-| **코드 공통화** | 반복되는 Terraform 코드를 모듈로 추출하여 재사용 |
-| **일관성** | Azure 리소스를 일관된 방식으로 생성 |
-| **환경 분리** | 환경(dev / stage / prod)과 완전히 분리된 설계 — 모듈은 환경에 의존하지 않음 |
-| **예측 가능성** | 장기 운영 시 변경 영향이 예측 가능한 구조 유지 |
+### 컴퓨팅
+- `virtual-machine` - Linux/Windows Virtual Machine
 
----
+### 스토리지
+- `storage-account` - Storage Account
+- `key-vault` - Key Vault
 
-## 설계 원칙
+### 모니터링 및 관리
+- `log-analytics-workspace` - Log Analytics Workspace
 
-1. **단일 책임**  
-   각 모듈은 **하나의 역할만** 담당합니다. (예: VNet 전용, Storage Account 전용)
+### 네트워크 보안
+- `private-endpoint` - Private Endpoint
 
-2. **라이브러리 전용**  
-   이 저장소에는 Provider 설정, Backend 설정, `terraform apply` 대상 루트 모듈을 두지 않습니다.
+### 기본 리소스
+- `resource-group` - Resource Group
 
-3. **환경 무관**  
-   모듈 내부에서 `dev` / `stage` / `prod`를 하드코딩하지 않습니다. 환경별 값은 terraform-infra에서 변수로 주입합니다.
+## 모듈 사용 방법
 
-4. **입·출력 명확**  
-   `variables.tf`와 `outputs.tf`로 인터페이스를 명확히 하고, 필요한 값만 노출합니다.
+각 모듈은 독립적인 디렉터리에 있으며, `main.tf`, `variables.tf`, `outputs.tf`, `README.md`, `versions.tf` 파일을 포함합니다.
 
----
+### 참조 방법
 
-## 버전 관리 정책 (Versioning)
-
-- 이 저장소는 **Git Tag 기반 버전 관리**를 사용합니다.
-- **terraform-infra에서는 반드시 특정 태그(ref)를 지정**하여 모듈을 참조해야 합니다.
-- `main` / `master` 등 브랜치 이름을 직접 참조하지 않습니다. (변경 사항이 예측 불가능해짐)
-
-### 사용 예시 (terraform-infra 쪽)
+IaC 레포에서 다음과 같이 참조합니다:
 
 ```hcl
-module "vnet" {
-  source = "git::https://github.com/your-org/terraform-infra.git//terraform_modules/vnet?ref=v1.2.0"
-
-  resource_group_name = var.resource_group_name
-  location            = var.location
-  vnet_name           = local.vnet_name
-  vnet_address_space  = ["10.0.0.0/16"]
-  subnets             = var.subnets
-  project_name        = var.project_name
-  environment         = var.environment
-  tags                = var.tags
+module "example" {
+  source = "git::https://github.com/kimchibee/terraform-modules.git//terraform_modules/모듈명?ref=main"
+  
+  # 모듈별 변수 전달
+  project_name = var.project_name
+  environment  = var.environment
+  # ...
 }
 ```
 
-- `ref=v1.2.0` 처럼 **태그를 명시**하여 사용합니다.
-- 버전 변경 시 배포 전 검토가 가능하고, 롤백 시 이전 태그로 되돌리면 됩니다.
+### 버전 관리
 
----
+- `ref=main`: 최신 개발 버전
+- `ref=v1.0.0`: 특정 태그 버전 (안정 버전)
 
-## 디렉터리 구조
+자세한 버전 관리 정책은 `VERSIONING.md`를 참고하세요.
 
-```
-terraform_modules/
-├── README.md           # 이 문서
-├── VERSIONING.md       # 버전 관리 상세 정책
-├── MODULE_REVIEW.md    # 모듈 검토·스케일아웃 vs 단일/SaaS 정책
-├── resource-group/     # Resource Group 1개
-├── vnet/               # Virtual Network + 서브넷
-├── storage-account/    # Storage Account 1개
-├── key-vault/          # Key Vault 1개 (PE는 private-endpoint 모듈 사용)
-├── private-endpoint/   # Private Endpoint 1개 + (선택) DNS Zone 연결
-└── ...                 # 그 외 단일 책임 모듈 (diagnostic-settings, nsg 등)
-```
+## 모듈 추가/수정 가이드
 
-각 모듈 디렉터리에는 다음을 포함합니다.
+새로운 모듈을 추가하거나 기존 모듈을 수정할 때는 다음 원칙을 따릅니다:
 
-- `main.tf` — 리소스 정의
-- `variables.tf` — 입력 변수
-- `outputs.tf` — 출력 값 (다른 모듈/루트에서 참조용)
+1. **단일 책임 원칙**: 각 모듈은 하나의 리소스 타입만 관리
+2. **환경 무관**: dev/stage/prod 구분 없이 재사용 가능
+3. **명확한 입력/출력**: `variables.tf`와 `outputs.tf`에 명확한 설명 포함
+4. **문서화**: 각 모듈에 `README.md` 포함
 
----
-
-## 모듈 추가 시 체크리스트
-
-- [ ] 하나의 역할만 담당하는가?
-- [ ] 환경(dev/stage/prod)을 하드코딩하지 않았는가?
-- [ ] `variables.tf` / `outputs.tf`로 인터페이스가 명확한가?
-- [ ] README 또는 주석으로 사용법을 남겼는가?
-- [ ] 배포 전 **새 버전 태그**를 붙일 예정인가?
-
----
-
-## terraform-infra와의 관계
-
-```
-┌─────────────────────────────────────────────────────────────────┐
-│  terraform-infra (또는 terraform_iac)                           │
-│  - Provider / Backend 설정                                       │
-│  - 환경별 tfvars (dev/stage/prod)                                │
-│  - terraform plan / apply 실행                                   │
-│  - State 보관                                                    │
-│                                                                  │
-│  module "vnet" {                                                 │
-│    source = "...?ref=v1.2.0"   ← 항상 태그(ref) 지정             │
-│    ...                                                            │
-│  }                                                               │
-└──────────────────────────────┬──────────────────────────────────┘
-                               │ 참조
-                               ▼
-┌─────────────────────────────────────────────────────────────────┐
-│  terraform_modules (이 저장소)                                   │
-│  - 재사용 가능한 모듈만 보관 (라이브러리)                         │
-│  - 직접 apply 하지 않음                                          │
-└─────────────────────────────────────────────────────────────────┘
-```
-
-이 문서는 terraform_modules의 역할, 목표, 버전 정책을 정의합니다.  
-상세 버전 규칙은 [VERSIONING.md](./VERSIONING.md)를 참고하세요.
+자세한 내용은 `MODULE_REVIEW.md`를 참고하세요.
