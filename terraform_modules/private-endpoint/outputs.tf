@@ -1,18 +1,18 @@
 #-------------------------------------------------------------------------------
-# Private Endpoint 모듈 - 출력
+# Private Endpoint 모듈 - 출력 (AVM 래퍼)
 #-------------------------------------------------------------------------------
 
 output "id" {
   description = "Private Endpoint 리소스 ID"
-  value       = azurerm_private_endpoint.main.id
+  value       = module.avm.resource_id
 }
 
 output "name" {
   description = "Private Endpoint 이름"
-  value       = azurerm_private_endpoint.main.name
+  value       = module.avm.name
 }
 
 output "private_ip_address" {
   description = "Private Endpoint에 할당된 프라이빗 IP"
-  value       = azurerm_private_endpoint.main.private_service_connection[0].private_ip_address
+  value       = module.avm.resource.private_service_connection[0].private_ip_address
 }
