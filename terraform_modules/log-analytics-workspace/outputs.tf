@@ -1,18 +1,18 @@
 #-------------------------------------------------------------------------------
-# Log Analytics Workspace 모듈 - 출력
+# Log Analytics Workspace 모듈 - 출력 (기존 IaC 호환: id, name, workspace_id)
 #-------------------------------------------------------------------------------
 
 output "id" {
   description = "Log Analytics Workspace ID"
-  value       = azurerm_log_analytics_workspace.main.id
+  value       = module.avm.resource_id
 }
 
 output "name" {
   description = "Log Analytics Workspace 이름"
-  value       = azurerm_log_analytics_workspace.main.name
+  value       = module.avm.name
 }
 
 output "workspace_id" {
   description = "Workspace ID (Customer ID)"
-  value       = azurerm_log_analytics_workspace.main.workspace_id
+  value       = module.avm.workspace_id
 }

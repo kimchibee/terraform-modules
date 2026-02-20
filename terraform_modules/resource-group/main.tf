@@ -1,9 +1,12 @@
 #-------------------------------------------------------------------------------
-# Resource Group 모듈 - 메인 리소스
-# 역할: Resource Group 1개만 생성
+# Resource Group - 공식 AVM 모듈 래퍼
+# 공식: Azure/avm-res-resources-resourcegroup/azurerm (Terraform Registry)
+# 버전 변경 시 아래 version 만 수정 후 이 레포 태그 갱신
 #-------------------------------------------------------------------------------
+module "avm" {
+  source  = "Azure/avm-res-resources-resourcegroup/azurerm"
+  version = "0.1.0"
 
-resource "azurerm_resource_group" "main" {
   name     = var.name
   location = var.location
   tags     = var.tags
