@@ -9,10 +9,10 @@ output "id" {
 
 output "name" {
   description = "Log Analytics Workspace 이름"
-  value       = module.avm.name
+  value       = module.avm.resource.name
 }
 
 output "workspace_id" {
   description = "Workspace ID (Customer ID)"
-  value       = module.avm.workspace_id
+  value       = module.avm.resource.workspace_id
 }
