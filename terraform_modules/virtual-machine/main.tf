@@ -1,5 +1,5 @@
 #-------------------------------------------------------------------------------
-# Virtual Machine 모듈 - NIC, OS Disk, VM
+# Virtual Machine 모듈 (AVM 예외: Linux/Windows·확장·Identity 등 복합 → AVM_EXCEPTIONS.md)
 # 역할: Linux/Windows VM 1대 + NIC + (선택) 확장
 #-------------------------------------------------------------------------------
 

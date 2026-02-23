@@ -1,7 +1,6 @@
 #-------------------------------------------------------------------------------
-# VNet 모듈 - 메인 리소스
-# 역할: Virtual Network 1개 + 서브넷만 생성.
-# VPN Gateway, DNS Resolver, NSG 등은 별도 모듈 권장.
+# VNet 모듈 (AVM 예외: AVM virtualnetwork 인터페이스 상이 → AVM_EXCEPTIONS.md)
+# 역할: Virtual Network 1개 + 서브넷만 생성. VPN Gateway, DNS Resolver, NSG 등은 별도 모듈 권장.
 #-------------------------------------------------------------------------------
 
 locals {
