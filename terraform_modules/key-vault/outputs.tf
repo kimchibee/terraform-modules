@@ -9,7 +9,7 @@ output "id" {
 
 output "name" {
   description = "Key Vault 이름"
-  value       = module.avm.name
+  value       = var.name
 }
 
 output "vault_uri" {
