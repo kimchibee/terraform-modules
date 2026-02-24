@@ -5,7 +5,7 @@
 #-------------------------------------------------------------------------------
 module "avm" {
   source  = "Azure/avm-res-resources-resourcegroup/azurerm"
-  version = "0.2.2"
+  version = "0.2.1"
 
   name     = var.name
   location = var.location
