@@ -15,6 +15,7 @@ module "avm" {
   version = "0.2.0"
 
   name                       = var.name
+  network_interface_name     = "${var.name}-nic"
   location                   = var.location
   resource_group_name        = var.resource_group_name
   subnet_resource_id        = var.subnet_id
