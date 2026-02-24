@@ -12,7 +12,7 @@ locals {
 
 module "avm" {
   source  = "Azure/avm-res-network-privateendpoint/azurerm"
-  version = "0.4.0"
+  version = "0.2.0"
 
   name                       = var.name
   location                   = var.location
