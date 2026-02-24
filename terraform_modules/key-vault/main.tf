@@ -7,7 +7,7 @@ data "azurerm_client_config" "current" {}
 
 module "avm" {
   source  = "Azure/avm-res-keyvault-vault/azurerm"
-  version = "0.7.3"
+  version = "0.5.3"
 
   name                = var.name
   location            = var.location
