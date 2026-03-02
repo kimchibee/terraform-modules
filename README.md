@@ -3,6 +3,8 @@
 Azure 인프라용 **재사용 가능한 Terraform 모듈** 라이브러리입니다.  
 **이 레포에는 공통 모듈만** 있으며, 직접 `terraform apply` 하지 않고 **[terraform-iac](https://github.com/kimchibee/terraform-iac)** 등 IaC 레포에서 `source = "git::..."` 로 참조해 사용합니다.
 
+> **📖 통합 가이드**: Terraform·AVM 기초, 레포 분리 이유, 리소스 추가/변경/삭제 메뉴얼, 용어 풀이는 **[terraform-iac 레포의 docs/TERRAFORM_GUIDE.md](https://github.com/kimchibee/terraform-iac/blob/main/docs/TERRAFORM_GUIDE.md)** 를 참고하세요.
+
 ---
 
 ## 사용자 환경 (이 레포를 다룰 때)
