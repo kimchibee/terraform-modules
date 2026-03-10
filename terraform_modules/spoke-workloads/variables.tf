@@ -51,6 +51,27 @@ variable "subnets" {
   }))
 }
 
+#--------------------------------------------------------------
+# Optional: network/connectivity 스택에서 이미 생성 시 false
+#--------------------------------------------------------------
+variable "enable_spoke_to_hub_peering" {
+  description = "Spoke→Hub VNet Peering 생성 여부 (connectivity 스택에서 관리 시 false)"
+  type        = bool
+  default     = true
+}
+
+variable "enable_private_dns_zone_links" {
+  description = "Private DNS Zone VNet Link 생성 여부 (network 스택에서 관리 시 false)"
+  type        = bool
+  default     = true
+}
+
+variable "enable_pep_nsg" {
+  description = "Spoke PEP용 NSG 생성 여부 (network 스택에서 관리 시 false)"
+  type        = bool
+  default     = true
+}
+
 variable "hub_vnet_id" {
   description = "Hub VNet ID for peering"
   type        = string

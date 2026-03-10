@@ -105,6 +105,8 @@ resource "azurerm_subnet_network_security_group_association" "apim" {
 }
 
 resource "azurerm_network_security_group" "pep" {
+  count = var.enable_pep_nsg ? 1 : 0
+
   name                = "${var.project_name}-spoke-pep-nsg"
   location            = local.rg_location
   resource_group_name = local.rg_name
@@ -124,6 +126,8 @@ resource "azurerm_network_security_group" "pep" {
 }
 
 resource "azurerm_subnet_network_security_group_association" "pep" {
+  count = var.enable_pep_nsg ? 1 : 0
+
   subnet_id                 = local.subnet_id_pep
-  network_security_group_id = azurerm_network_security_group.pep.id
+  network_security_group_id = azurerm_network_security_group.pep[0].id
 }
