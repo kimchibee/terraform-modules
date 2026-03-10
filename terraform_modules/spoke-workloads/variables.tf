@@ -73,18 +73,21 @@ variable "enable_pep_nsg" {
 }
 
 variable "hub_vnet_id" {
-  description = "Hub VNet ID for peering"
+  description = "Hub VNet ID for peering (optional when enable_spoke_to_hub_peering = false)"
   type        = string
+  default     = null
 }
 
 variable "hub_vnet_name" {
-  description = "Hub VNet name"
+  description = "Hub VNet name (optional when enable_spoke_to_hub_peering = false)"
   type        = string
+  default     = null
 }
 
 variable "hub_resource_group_name" {
-  description = "Hub resource group name"
+  description = "Hub resource group name (optional when enable_private_dns_zone_links = false)"
   type        = string
+  default     = null
 }
 
 variable "hub_monitoring_vm_subnet_id" {
