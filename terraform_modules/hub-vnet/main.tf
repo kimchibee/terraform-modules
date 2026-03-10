@@ -47,6 +47,12 @@ resource "azurerm_subnet" "subnets" {
       }
     }
   }
+
+  timeouts {
+    create = "50m"
+    update = "30m"
+    delete = "30m"
+  }
 }
 
 #--------------------------------------------------------------
@@ -152,3 +158,4 @@ resource "azurerm_subnet_network_security_group_association" "pep" {
   subnet_id                 = azurerm_subnet.subnets["pep-snet"].id
   network_security_group_id = azurerm_network_security_group.pep.id
 }
+
