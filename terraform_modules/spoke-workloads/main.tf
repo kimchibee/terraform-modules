@@ -55,8 +55,12 @@ resource "azurerm_subnet" "subnets" {
 
 #--------------------------------------------------------------
 # Network Security Groups
+# APIM NSG는 apim_name이 설정된 스택(APIM 스택)에서만 생성
+# ai-services 스택(apim_name = "")에서는 생성하지 않음
 #--------------------------------------------------------------
 resource "azurerm_network_security_group" "apim" {
+  count = length(var.apim_name) > 0 ? 1 : 0
+
   name                = "${var.project_name}-apim-nsg"
   location            = local.rg_location
   resource_group_name = local.rg_name
@@ -100,8 +104,10 @@ resource "azurerm_network_security_group" "apim" {
 }
 
 resource "azurerm_subnet_network_security_group_association" "apim" {
+  count = length(var.apim_name) > 0 ? 1 : 0
+
   subnet_id                 = local.subnet_id_apim
-  network_security_group_id = azurerm_network_security_group.apim.id
+  network_security_group_id = azurerm_network_security_group.apim[0].id
 }
 
 resource "azurerm_network_security_group" "pep" {
