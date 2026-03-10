@@ -35,6 +35,9 @@ resource "azurerm_api_management" "main" {
   identity {
     type = "SystemAssigned"
   }
+
+  # APIM은 서브넷에 NSG가 연결된 뒤에만 배포 가능 (Azure 요구사항)
+  depends_on = [azurerm_subnet_network_security_group_association.apim]
 }
 
 #--------------------------------------------------------------
