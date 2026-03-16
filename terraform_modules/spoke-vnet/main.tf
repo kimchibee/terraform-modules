@@ -105,16 +105,16 @@ resource "azurerm_virtual_network_peering" "spoke_to_hub" {
 # Zones live in Hub RG → link must be created with azurerm.hub
 #--------------------------------------------------------------
 resource "azurerm_private_dns_zone_virtual_network_link" "spoke" {
-  for_each = var.enable_private_dns_links ? var.private_dns_zone_ids : {}
+  for_each = var.enable_private_dns_links ? { for k in var.private_dns_zone_keys : k => var.private_dns_zone_names[k] if try(var.private_dns_zone_names[k], "") != "" } : {}
 
   provider = azurerm.hub
 
-  name                  = "${var.vnet_name}-link"
-  resource_group_name   = var.hub_resource_group_name
-  private_dns_zone_name = split("/", each.value)[8]
-  virtual_network_id    = azurerm_virtual_network.spoke.id
-  registration_enabled  = false
-  tags                  = var.tags
+  name                   = "${var.vnet_name}-link"
+  resource_group_name    = var.hub_resource_group_name
+  private_dns_zone_name  = each.value
+  virtual_network_id     = azurerm_virtual_network.spoke.id
+  registration_enabled    = false
+  tags                   = var.tags
 }
 
 #--------------------------------------------------------------

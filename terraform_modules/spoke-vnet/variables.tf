@@ -94,6 +94,18 @@ variable "private_dns_zone_ids" {
   default     = {}
 }
 
+variable "private_dns_zone_keys" {
+  description = "Set of zone keys (logical names) for Hub DNS zone links. Use a static set so for_each keys are known at plan time (avoids 'known only after apply' errors)."
+  type        = set(string)
+  default     = []
+}
+
+variable "private_dns_zone_names" {
+  description = "Static map key => zone FQDN (e.g. agentsvc => privatelink.agentsvc.azure-automation.net). Used for Hub→Spoke links so for_each is known at plan time."
+  type        = map(string)
+  default     = {}
+}
+
 #--------------------------------------------------------------
 # Spoke-owned Private DNS Zones (Optional)
 # Create zones in Spoke RG and link Spoke VNet (e.g. APIM, OpenAI, AI Foundry)
