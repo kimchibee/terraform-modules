@@ -49,3 +49,16 @@ output "vnet_peering_id" {
   description = "VNet Peering ID (Spoke to Hub)"
   value       = var.enable_hub_peering ? azurerm_virtual_network_peering.spoke_to_hub[0].id : null
 }
+
+#--------------------------------------------------------------
+# Spoke-owned Private DNS Zone Outputs
+#--------------------------------------------------------------
+output "spoke_private_dns_zone_ids" {
+  description = "Map of Spoke Private DNS Zone IDs (key = logical name)"
+  value       = { for k, v in azurerm_private_dns_zone.spoke : k => v.id }
+}
+
+output "spoke_private_dns_zone_names" {
+  description = "Map of Spoke Private DNS Zone names (key = logical name)"
+  value       = { for k, v in azurerm_private_dns_zone.spoke : k => v.name }
+}

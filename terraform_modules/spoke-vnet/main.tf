@@ -101,14 +101,40 @@ resource "azurerm_virtual_network_peering" "spoke_to_hub" {
 }
 
 #--------------------------------------------------------------
-# Link Private DNS Zones to Spoke VNet (Optional)
+# Link Private DNS Zones (from Hub) to Spoke VNet (Optional)
+# Zones live in Hub RG → link must be created with azurerm.hub
 #--------------------------------------------------------------
 resource "azurerm_private_dns_zone_virtual_network_link" "spoke" {
   for_each = var.enable_private_dns_links ? var.private_dns_zone_ids : {}
 
+  provider = azurerm.hub
+
   name                  = "${var.vnet_name}-link"
   resource_group_name   = var.hub_resource_group_name
   private_dns_zone_name = split("/", each.value)[8]
+  virtual_network_id    = azurerm_virtual_network.spoke.id
+  registration_enabled  = false
+  tags                  = var.tags
+}
+
+#--------------------------------------------------------------
+# Spoke-owned Private DNS Zones (Optional)
+# Create zones in Spoke RG and link Spoke VNet (e.g. APIM, OpenAI, AI Foundry)
+#--------------------------------------------------------------
+resource "azurerm_private_dns_zone" "spoke" {
+  for_each = var.spoke_private_dns_zones
+
+  name                = each.value
+  resource_group_name = azurerm_resource_group.spoke.name
+  tags                = var.tags
+}
+
+resource "azurerm_private_dns_zone_virtual_network_link" "spoke_zones" {
+  for_each = var.spoke_private_dns_zones
+
+  name                  = "${var.vnet_name}-link"
+  resource_group_name   = azurerm_resource_group.spoke.name
+  private_dns_zone_name = azurerm_private_dns_zone.spoke[each.key].name
   virtual_network_id    = azurerm_virtual_network.spoke.id
   registration_enabled  = false
   tags                  = var.tags

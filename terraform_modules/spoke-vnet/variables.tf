@@ -95,6 +95,16 @@ variable "private_dns_zone_ids" {
 }
 
 #--------------------------------------------------------------
+# Spoke-owned Private DNS Zones (Optional)
+# Create zones in Spoke RG and link Spoke VNet (e.g. APIM, OpenAI, AI Foundry)
+#--------------------------------------------------------------
+variable "spoke_private_dns_zones" {
+  description = "Private DNS Zones to create in Spoke (key = logical name, value = zone FQDN). E.g. azure-api, openai, cognitiveservices, ml, notebooks."
+  type        = map(string)
+  default     = {}
+}
+
+#--------------------------------------------------------------
 # Network Security Groups - Optional
 #--------------------------------------------------------------
 variable "enable_pep_nsg" {
