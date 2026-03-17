@@ -58,11 +58,12 @@ resource "azurerm_linux_virtual_machine" "main" {
   tags = var.tags
 }
 
-# Windows VM
+# Windows VM (computer_name: OS 호스트명, 최대 15자. null이면 name 사용)
 resource "azurerm_windows_virtual_machine" "main" {
   count = var.os_type == "windows" ? 1 : 0
 
   name                = var.name
+  computer_name       = var.computer_name
   location            = var.location
   resource_group_name = var.resource_group_name
   size                = var.size

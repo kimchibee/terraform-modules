@@ -77,3 +77,9 @@ variable "vm_extensions" {
   }))
   default = []
 }
+
+variable "computer_name" {
+  description = "Windows VM 전용: OS 호스트명(computer name). 최대 15자. 미설정 시 Azure가 name을 사용하며, name이 15자 초과면 배포 실패."
+  type        = string
+  default     = null
+}
