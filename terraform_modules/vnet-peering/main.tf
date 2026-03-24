@@ -1,13 +1,21 @@
 #-------------------------------------------------------------------------------
-# VNet Peering — 분류: azurerm-only 예외 (docs/AVM_COVERAGE.md)
-# Registry에 VNet Peering 전용 AVM이 없어 azurerm_virtual_network_peering 유지.
+# VNet Peering — AVM 서브모듈 래퍼
+# 공식: Azure/avm-res-network-virtualnetwork/azurerm//modules/peering
 #-------------------------------------------------------------------------------
 
-resource "azurerm_virtual_network_peering" "main" {
-  name                         = var.name
-  resource_group_name          = var.resource_group_name
-  virtual_network_name         = var.virtual_network_name
-  remote_virtual_network_id    = var.remote_virtual_network_id
+data "azurerm_virtual_network" "local" {
+  name                = var.virtual_network_name
+  resource_group_name = var.resource_group_name
+}
+
+module "avm" {
+  source  = "Azure/avm-res-network-virtualnetwork/azurerm//modules/peering"
+  version = "0.17.1"
+
+  name                      = var.name
+  parent_id                 = data.azurerm_virtual_network.local.id
+  remote_virtual_network_id = var.remote_virtual_network_id
+
   allow_virtual_network_access = var.allow_virtual_network_access
   allow_forwarded_traffic      = var.allow_forwarded_traffic
   allow_gateway_transit        = var.allow_gateway_transit

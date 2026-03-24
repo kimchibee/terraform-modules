@@ -1,7 +1,6 @@
 #-------------------------------------------------------------------------------
-# VNet 모듈 - 메인 리소스
-# 역할: Virtual Network 1개 + 서브넷만 생성.
-# VPN Gateway, DNS Resolver, NSG 등은 별도 모듈 권장.
+# Virtual Network — Azure Verified Module (AVM) 래퍼
+# 공식: Azure/avm-res-network-virtualnetwork/azurerm (VNet·서브넷은 AzAPI 기반)
 #-------------------------------------------------------------------------------
 
 locals {
@@ -10,35 +9,38 @@ locals {
     Environment = var.environment
     ManagedBy   = "terraform"
   })
-}
 
-resource "azurerm_virtual_network" "main" {
-  name                = var.vnet_name
-  location            = var.location
-  resource_group_name = var.resource_group_name
-  address_space       = var.vnet_address_space
-  tags                = local.common_tags
-}
-
-resource "azurerm_subnet" "subnets" {
-  for_each = var.subnets
-
-  name                                          = each.key
-  resource_group_name                           = var.resource_group_name
-  virtual_network_name                          = azurerm_virtual_network.main.name
-  address_prefixes                              = each.value.address_prefixes
-  service_endpoints                             = each.value.service_endpoints
-  private_endpoint_network_policies_enabled     = each.value.private_endpoint_network_policies == "Enabled"
-  private_link_service_network_policies_enabled = each.value.private_link_service_network_policies == "Enabled"
-
-  dynamic "delegation" {
-    for_each = try(each.value.delegation, null) != null ? [each.value.delegation] : []
-    content {
-      name = delegation.value.name
-      service_delegation {
-        name    = delegation.value.service_name
-        actions = delegation.value.actions
-      }
-    }
+  subnets_avm = {
+    for k, v in var.subnets : k => merge(
+      {
+        name                                          = k
+        address_prefixes                              = v.address_prefixes
+        service_endpoints                             = toset(coalesce(v.service_endpoints, []))
+        private_endpoint_network_policies             = v.private_endpoint_network_policies
+        private_link_service_network_policies_enabled = v.private_link_service_network_policies == "Enabled"
+        default_outbound_access_enabled               = true
+      },
+      try(v.delegation, null) != null ? {
+        delegation = [{
+          name = v.delegation.name
+          service_delegation = {
+            name = v.delegation.service_name
+          }
+        }]
+      } : {}
+    )
   }
+}
+
+module "avm" {
+  source  = "Azure/avm-res-network-virtualnetwork/azurerm"
+  version = "0.7.1"
+
+  name                = var.vnet_name
+  resource_group_name = var.resource_group_name
+  location            = var.location
+  address_space       = toset(var.vnet_address_space)
+  subnets             = local.subnets_avm
+  tags                = local.common_tags
+  enable_telemetry    = false
 }

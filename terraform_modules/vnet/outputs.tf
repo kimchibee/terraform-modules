@@ -5,20 +5,23 @@
 
 output "vnet_id" {
   description = "생성된 Virtual Network ID"
-  value       = azurerm_virtual_network.main.id
+  value       = module.avm.resource_id
 }
 
 output "vnet_name" {
   description = "Virtual Network 이름"
-  value       = azurerm_virtual_network.main.name
+  value       = module.avm.name
 }
 
 output "vnet_address_space" {
   description = "VNet 주소 공간"
-  value       = azurerm_virtual_network.main.address_space
+  value = try(
+    module.avm.resource.output.properties.addressSpace.addressPrefixes,
+    module.avm.resource.body.properties.addressSpace.addressPrefixes
+  )
 }
 
 output "subnet_ids" {
   description = "서브넷 ID 맵 (서브넷 이름 → ID). 예: subnet_ids[\"GatewaySubnet\"]"
-  value       = { for k, s in azurerm_subnet.subnets : k => s.id }
+  value       = { for k, s in module.avm.subnets : k => s.resource_id }
 }

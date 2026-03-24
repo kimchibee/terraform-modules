@@ -67,13 +67,13 @@ variable "enable_identity" {
 variable "vm_extensions" {
   description = "VM 확장 목록. 각 항목: name, publisher, type, type_handler_version, auto_upgrade_minor_version, settings, protected_settings"
   type = list(object({
-    name                     = string
-    publisher                = string
-    type                     = string
-    type_handler_version     = string
+    name                       = string
+    publisher                  = string
+    type                       = string
+    type_handler_version       = string
     auto_upgrade_minor_version = bool
-    settings                 = optional(map(any), {})
-    protected_settings       = optional(map(any), {})
+    settings                   = optional(map(any), {})
+    protected_settings         = optional(map(any), {})
   }))
   default = []
 }
@@ -82,4 +82,10 @@ variable "computer_name" {
   description = "Windows VM 전용: OS 호스트명(computer name). 최대 15자. 미설정 시 Azure가 name을 사용하며, name이 15자 초과면 배포 실패."
   type        = string
   default     = null
+}
+
+variable "zone" {
+  description = "Availability zone for VM deployment."
+  type        = string
+  default     = "1"
 }

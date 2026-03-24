@@ -1,7 +1,7 @@
 output "id" {
-  value = try(azurerm_application_security_group.this[0].id, null)
+  value = try(module.avm[0].resource_id, null)
 }
 
 output "name" {
-  value = try(azurerm_application_security_group.this[0].name, null)
+  value = try(module.avm[0].application_security_group.name, null)
 }
