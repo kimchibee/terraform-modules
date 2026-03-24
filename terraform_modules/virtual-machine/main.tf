@@ -1,6 +1,6 @@
 #-------------------------------------------------------------------------------
-# Virtual Machine 모듈 - NIC, OS Disk, VM
-# 역할: Linux/Windows VM 1대 + NIC + (선택) 확장
+# Virtual Machine — 분류: azurerm-only 예외 (docs/AVM_COVERAGE.md)
+# AVM VM 모듈과 호출 계약 불일치로 azurerm NIC/VM 유지.
 #-------------------------------------------------------------------------------
 
 resource "azurerm_network_interface" "main" {

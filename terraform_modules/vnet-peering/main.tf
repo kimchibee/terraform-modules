@@ -1,6 +1,6 @@
 #-------------------------------------------------------------------------------
-# VNet Peering 모듈 - 메인 리소스
-# 역할: 한 방향 VNet Peering 1개 생성
+# VNet Peering — 분류: azurerm-only 예외 (docs/AVM_COVERAGE.md)
+# Registry에 VNet Peering 전용 AVM이 없어 azurerm_virtual_network_peering 유지.
 #-------------------------------------------------------------------------------
 
 resource "azurerm_virtual_network_peering" "main" {

@@ -1,15 +1,32 @@
 #--------------------------------------------------------------
+# Hub VNet (복합 스택) — 분류: azurerm 중심 + 점진적 AVM (docs/AVM_COVERAGE.md)
+# 리소스 생성은 가능한 한 Azure Verified Module(AVM) 래퍼 모듈로 옮기는 중입니다.
+# 아래 azurerm_* 리소스는 AVM이 없거나(예: VPN Gateway, Local Network Gateway 연결),
+# 기존 state·출력 계약 유지가 필요한 경우 예외로 둡니다.
+#--------------------------------------------------------------
 # Data Sources
 #--------------------------------------------------------------
 data "azurerm_client_config" "current" {}
 
 #--------------------------------------------------------------
-# Resource Group
+# Resource Group (optional — securitygroup/hub 등에서 먼저 만들 수 있음)
 #--------------------------------------------------------------
 resource "azurerm_resource_group" "hub" {
+  count    = var.create_resource_group ? 1 : 0
   name     = var.resource_group_name
   location = var.location
   tags     = var.tags
+}
+
+data "azurerm_resource_group" "hub_existing" {
+  count = var.create_resource_group ? 0 : 1
+  name  = var.resource_group_name
+}
+
+locals {
+  hub_resource_group_name     = var.create_resource_group ? azurerm_resource_group.hub[0].name : data.azurerm_resource_group.hub_existing[0].name
+  hub_resource_group_location = var.create_resource_group ? azurerm_resource_group.hub[0].location : data.azurerm_resource_group.hub_existing[0].location
+  hub_resource_group_id       = var.create_resource_group ? azurerm_resource_group.hub[0].id : data.azurerm_resource_group.hub_existing[0].id
 }
 
 #--------------------------------------------------------------
@@ -17,8 +34,8 @@ resource "azurerm_resource_group" "hub" {
 #--------------------------------------------------------------
 resource "azurerm_virtual_network" "hub" {
   name                = var.vnet_name
-  location            = azurerm_resource_group.hub.location
-  resource_group_name = azurerm_resource_group.hub.name
+  location            = local.hub_resource_group_location
+  resource_group_name = local.hub_resource_group_name
   address_space       = var.vnet_address_space
   tags                = var.tags
 }
@@ -30,7 +47,7 @@ resource "azurerm_subnet" "subnets" {
   for_each = var.subnets
 
   name                                          = each.key
-  resource_group_name                           = azurerm_resource_group.hub.name
+  resource_group_name                           = local.hub_resource_group_name
   virtual_network_name                          = azurerm_virtual_network.hub.name
   address_prefixes                              = each.value.address_prefixes
   service_endpoints                             = each.value.service_endpoints
@@ -60,8 +77,8 @@ resource "azurerm_subnet" "subnets" {
 #--------------------------------------------------------------
 resource "azurerm_network_security_group" "monitoring_vm" {
   name                = "${var.project_name}-monitoring-vm-nsg"
-  location            = azurerm_resource_group.hub.location
-  resource_group_name = azurerm_resource_group.hub.name
+  location            = local.hub_resource_group_location
+  resource_group_name = local.hub_resource_group_name
   tags                = var.tags
 
   # Inbound Rules
@@ -137,8 +154,8 @@ resource "azurerm_subnet_network_security_group_association" "monitoring_vm" {
 
 resource "azurerm_network_security_group" "pep" {
   name                = "${var.project_name}-pep-nsg"
-  location            = azurerm_resource_group.hub.location
-  resource_group_name = azurerm_resource_group.hub.name
+  location            = local.hub_resource_group_location
+  resource_group_name = local.hub_resource_group_name
   tags                = var.tags
 
   security_rule {

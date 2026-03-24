@@ -1,6 +1,7 @@
 #--------------------------------------------------------------
-# Shared Services: Solutions / Action Group / Dashboard
-# Log Analytics Workspace는 별도 모듈로 생성. 여기선 그 위에 붙는 리소스만.
+# Shared Services — 분류: azurerm 중심 (docs/AVM_COVERAGE.md)
+# Log Analytics Workspace는 별도 모듈(AVM 래퍼)로 생성. 여기선 그 위에 붙는 리소스만.
+# LA Solution / Action Group / Portal Dashboard 등은 AVM 단일 모듈이 없어 azurerm 예외 유지.
 #--------------------------------------------------------------
 resource "azurerm_log_analytics_solution" "container_insights" {
   count = var.enable ? 1 : 0
