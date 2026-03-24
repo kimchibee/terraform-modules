@@ -29,6 +29,11 @@ variable "private_link_service_network_policies_enabled" {
   default = false
 }
 
+variable "network_security_group_id" {
+  type    = string
+  default = null
+}
+
 variable "delegation" {
   type = object({
     name         = string
@@ -53,6 +58,9 @@ module "avm" {
   address_prefixes                              = var.address_prefixes
   private_endpoint_network_policies             = var.private_endpoint_network_policies
   private_link_service_network_policies_enabled = var.private_link_service_network_policies_enabled
+  network_security_group = var.network_security_group_id == null ? null : {
+    id = var.network_security_group_id
+  }
 
   service_endpoints_with_location = [
     for service in var.service_endpoints : {
