@@ -60,6 +60,7 @@ module "avm" {
   name                = var.name
   resource_group_name = var.resource_group_name
   location            = var.location
+  zone                = var.zone
 
   os_type                = local.os_type_normalized
   sku_size               = var.size

@@ -83,3 +83,9 @@ variable "computer_name" {
   type        = string
   default     = null
 }
+
+variable "zone" {
+  description = "Availability zone for VM deployment."
+  type        = string
+  default     = "1"
+}
