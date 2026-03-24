@@ -3,8 +3,8 @@
 #--------------------------------------------------------------
 resource "azurerm_public_ip" "vpn_gateway" {
   name                = "${var.vpn_gateway_name}-pip"
-  location            = azurerm_resource_group.hub.location
-  resource_group_name = azurerm_resource_group.hub.name
+  location            = local.hub_resource_group_location
+  resource_group_name = local.hub_resource_group_name
   allocation_method   = "Static"
   sku                 = "Standard"
   tags                = var.tags
@@ -15,8 +15,8 @@ resource "azurerm_public_ip" "vpn_gateway" {
 #--------------------------------------------------------------
 resource "azurerm_virtual_network_gateway" "vpn" {
   name                = var.vpn_gateway_name
-  location            = azurerm_resource_group.hub.location
-  resource_group_name = azurerm_resource_group.hub.name
+  location            = local.hub_resource_group_location
+  resource_group_name = local.hub_resource_group_name
   type                = var.vpn_gateway_type
   vpn_type            = "RouteBased"
   sku                 = var.vpn_gateway_sku
@@ -39,8 +39,8 @@ resource "azurerm_local_network_gateway" "onprem" {
   for_each = { for lgw in var.local_gateway_configs : lgw.name => lgw }
 
   name                = "${var.project_name}-x-x-${each.value.name}"
-  location            = azurerm_resource_group.hub.location
-  resource_group_name = azurerm_resource_group.hub.name
+  location            = local.hub_resource_group_location
+  resource_group_name = local.hub_resource_group_name
   gateway_address     = each.value.gateway_address
   address_space       = each.value.address_space
   tags                = var.tags
@@ -61,8 +61,8 @@ resource "azurerm_virtual_network_gateway_connection" "onprem" {
   for_each = { for lgw in var.local_gateway_configs : lgw.name => lgw }
 
   name                       = "${var.project_name}-x-x-vcn-${index(var.local_gateway_configs, each.value) + 1}"
-  location                   = azurerm_resource_group.hub.location
-  resource_group_name        = azurerm_resource_group.hub.name
+  location                   = local.hub_resource_group_location
+  resource_group_name        = local.hub_resource_group_name
   type                       = "IPsec"
   virtual_network_gateway_id = azurerm_virtual_network_gateway.vpn.id
   local_network_gateway_id   = azurerm_local_network_gateway.onprem[each.key].id

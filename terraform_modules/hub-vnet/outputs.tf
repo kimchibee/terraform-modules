@@ -3,12 +3,12 @@
 #--------------------------------------------------------------
 output "resource_group_name" {
   description = "Hub resource group name"
-  value       = azurerm_resource_group.hub.name
+  value       = local.hub_resource_group_name
 }
 
 output "resource_group_id" {
   description = "Hub resource group ID"
-  value       = azurerm_resource_group.hub.id
+  value       = local.hub_resource_group_id
 }
 
 #--------------------------------------------------------------

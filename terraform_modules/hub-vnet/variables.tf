@@ -29,6 +29,12 @@ variable "resource_group_name" {
   type        = string
 }
 
+variable "create_resource_group" {
+  description = "When false, the resource group must already exist (e.g. created by securitygroup/hub). When true, this module creates the resource group."
+  type        = bool
+  default     = true
+}
+
 #--------------------------------------------------------------
 # Virtual Network
 #--------------------------------------------------------------
@@ -49,7 +55,7 @@ variable "subnets" {
     service_endpoints                     = optional(list(string), [])
     private_endpoint_network_policies     = optional(string, "Disabled")
     private_link_service_network_policies = optional(string, "Disabled")
-    delegation                            = optional(object({
+    delegation = optional(object({
       name         = string
       service_name = string
       actions      = list(string)

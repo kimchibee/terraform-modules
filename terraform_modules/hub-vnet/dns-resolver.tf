@@ -3,8 +3,8 @@
 #--------------------------------------------------------------
 resource "azurerm_private_dns_resolver" "hub" {
   name                = var.dns_resolver_name
-  resource_group_name = azurerm_resource_group.hub.name
-  location            = azurerm_resource_group.hub.location
+  resource_group_name = local.hub_resource_group_name
+  location            = local.hub_resource_group_location
   virtual_network_id  = azurerm_virtual_network.hub.id
   tags                = var.tags
 }
@@ -15,7 +15,7 @@ resource "azurerm_private_dns_resolver" "hub" {
 resource "azurerm_private_dns_resolver_inbound_endpoint" "hub" {
   name                    = "${var.dns_resolver_name}-inbound"
   private_dns_resolver_id = azurerm_private_dns_resolver.hub.id
-  location                = azurerm_resource_group.hub.location
+  location                = local.hub_resource_group_location
   tags                    = var.tags
 
   ip_configurations {

@@ -13,7 +13,7 @@ locals {
     "vault" = "privatelink.vaultcore.azure.net"
 
     # Azure OpenAI / Cognitive Services
-    "openai"     = "privatelink.openai.azure.com"
+    "openai"            = "privatelink.openai.azure.com"
     "cognitiveservices" = "privatelink.cognitiveservices.azure.com"
 
     # API Management
@@ -24,10 +24,10 @@ locals {
     "notebooks" = "privatelink.notebooks.azure.net"
 
     # Azure Monitor
-    "monitor"         = "privatelink.monitor.azure.com"
-    "oms"             = "privatelink.oms.opinsights.azure.com"
-    "ods"             = "privatelink.ods.opinsights.azure.com"
-    "agentsvc"        = "privatelink.agentsvc.azure-automation.net"
+    "monitor"  = "privatelink.monitor.azure.com"
+    "oms"      = "privatelink.oms.opinsights.azure.com"
+    "ods"      = "privatelink.ods.opinsights.azure.com"
+    "agentsvc" = "privatelink.agentsvc.azure-automation.net"
   }
 }
 
@@ -35,7 +35,7 @@ resource "azurerm_private_dns_zone" "zones" {
   for_each = local.private_dns_zones
 
   name                = each.value
-  resource_group_name = azurerm_resource_group.hub.name
+  resource_group_name = local.hub_resource_group_name
   tags                = var.tags
 }
 
@@ -46,7 +46,7 @@ resource "azurerm_private_dns_zone_virtual_network_link" "hub" {
   for_each = local.private_dns_zones
 
   name                  = "${var.vnet_name}-link"
-  resource_group_name   = azurerm_resource_group.hub.name
+  resource_group_name   = local.hub_resource_group_name
   private_dns_zone_name = azurerm_private_dns_zone.zones[each.key].name
   virtual_network_id    = azurerm_virtual_network.hub.id
   registration_enabled  = false
