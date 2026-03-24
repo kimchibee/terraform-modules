@@ -23,16 +23,16 @@ module "logs_storage" {
 
   source = "../storage-account"
 
-  project_name  = var.project_name
-  environment   = var.environment
-  location      = var.location
+  project_name        = var.project_name
+  environment         = var.environment
+  location            = var.location
   resource_group_name = var.resource_group_name
 
   storage_account_name = "${each.value}${random_string.storage_suffix.result}"
 
-  account_tier             = "Standard"
-  account_replication_type = "LRS"
-  min_tls_version          = "TLS1_2"
+  account_tier                  = "Standard"
+  account_replication_type      = "LRS"
+  min_tls_version               = "TLS1_2"
   public_network_access_enabled = false
 
   network_rules = {
@@ -52,15 +52,15 @@ module "storage_blob_pe" {
 
   source = "../private-endpoint"
 
-  project_name  = var.project_name
-  environment   = var.environment
-  name          = "pe-${each.value}-blob"
-  location      = var.location
+  project_name        = var.project_name
+  environment         = var.environment
+  name                = "pe-${each.value}-blob"
+  location            = var.location
   resource_group_name = var.resource_group_name
-  subnet_id     = var.pep_subnet_id
+  subnet_id           = var.pep_subnet_id
 
-  target_resource_id = module.logs_storage[each.key].storage_account_id
-  subresource_names  = ["blob"]
+  target_resource_id   = module.logs_storage[each.key].storage_account_id
+  subresource_names    = ["blob"]
   private_dns_zone_ids = [var.private_dns_zone_ids["blob"]]
 
   tags = local.common_tags

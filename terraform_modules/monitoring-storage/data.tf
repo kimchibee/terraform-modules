@@ -1,8 +1,6 @@
 #--------------------------------------------------------------
-# Data Sources
+# Data Sources (기존 리소스 재사용 시)
 #--------------------------------------------------------------
-data "azurerm_client_config" "current" {}
-
 data "azurerm_storage_account" "existing" {
   count               = var.existing_storage_account_name != null && var.existing_storage_account_name != "" ? 1 : 0
   name                = var.existing_storage_account_name

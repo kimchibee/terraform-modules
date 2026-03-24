@@ -1,61 +1,61 @@
 #--------------------------------------------------------------
-# Key Vault
+# Key Vault — AVM (key-vault 래퍼)
 #--------------------------------------------------------------
-resource "azurerm_key_vault" "hub" {
+module "hub_key_vault" {
   count = var.enable_key_vault ? 1 : 0
 
-  name                          = local.key_vault_name
-  location                      = var.location
-  resource_group_name           = var.resource_group_name
-  tenant_id                     = data.azurerm_client_config.current.tenant_id
+  source = "../key-vault"
+
+  project_name        = var.project_name
+  environment         = var.environment
+  name                = local.key_vault_name
+  location            = var.location
+  resource_group_name = var.resource_group_name
+
   sku_name                      = "standard"
   soft_delete_retention_days    = 7
   purge_protection_enabled      = true
   public_network_access_enabled = false
-  tags                          = local.common_tags
 
-  network_acls {
+  network_acls = {
     default_action             = "Deny"
-    bypass                     = "AzureServices"
-    virtual_network_subnet_ids = [
-      var.monitoring_vm_subnet_id,
-      var.pep_subnet_id
-    ]
+    bypass                     = ["AzureServices"]
+    virtual_network_subnet_ids = [var.monitoring_vm_subnet_id, var.pep_subnet_id]
   }
+
+  tags = local.common_tags
 }
 
 #--------------------------------------------------------------
-# Private Endpoint for Key Vault
+# Private Endpoint for Key Vault — AVM (private-endpoint 래퍼)
 #--------------------------------------------------------------
-resource "azurerm_private_endpoint" "key_vault" {
+module "key_vault_pe" {
   count = var.enable_key_vault ? 1 : 0
 
+  source = "../private-endpoint"
+
+  project_name        = var.project_name
+  environment         = var.environment
   name                = "pe-${var.key_vault_name}"
   location            = var.location
   resource_group_name = var.resource_group_name
   subnet_id           = var.pep_subnet_id
-  tags                = local.common_tags
 
-  private_service_connection {
-    name                           = "psc-${var.key_vault_name}"
-    private_connection_resource_id = azurerm_key_vault.hub[0].id
-    subresource_names              = ["vault"]
-    is_manual_connection           = false
-  }
+  target_resource_id   = module.hub_key_vault[0].id
+  subresource_names    = ["vault"]
+  private_dns_zone_ids = [var.private_dns_zone_ids["vault"]]
 
-  private_dns_zone_group {
-    name                 = "default"
-    private_dns_zone_ids = [var.private_dns_zone_ids["vault"]]
-  }
+  tags = local.common_tags
 }
 
 #--------------------------------------------------------------
 # Role Assignment: VM Managed Identity → Key Vault
+# 예외: 단일 할당에 AVM 패턴이 과도하여 azurerm_role_assignment 유지
 #--------------------------------------------------------------
 resource "azurerm_role_assignment" "vm_key_vault_access" {
   count = var.enable_monitoring_vm && var.enable_key_vault && var.monitoring_vm_identity_principal_id != "" ? 1 : 0
 
-  scope                = azurerm_key_vault.hub[0].id
+  scope                = module.hub_key_vault[0].id
   role_definition_name = "Key Vault Secrets User"
   principal_id         = var.monitoring_vm_identity_principal_id
 }
@@ -63,7 +63,7 @@ resource "azurerm_role_assignment" "vm_key_vault_access" {
 resource "azurerm_role_assignment" "vm_key_vault_reader" {
   count = var.enable_monitoring_vm && var.enable_key_vault && var.monitoring_vm_identity_principal_id != "" ? 1 : 0
 
-  scope                = azurerm_key_vault.hub[0].id
+  scope                = module.hub_key_vault[0].id
   role_definition_name = "Key Vault Reader"
   principal_id         = var.monitoring_vm_identity_principal_id
 }
