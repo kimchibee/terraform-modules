@@ -15,6 +15,8 @@
 | `resource-group` | **AVM-only** | `avm-res-resources-resourcegroup` 래퍼 |
 | `log-analytics-workspace` | **AVM-only** | `avm-res-operationalinsights-workspace` 래퍼 |
 | `key-vault` | **AVM-only** | `avm-res-keyvault-vault` 래퍼 |
+| `application-security-group` | **azurerm-only** | ASG 단일 리소스 예외 모듈 |
+| `network-security-group` | **azurerm-only** | NSG + inline rule 단일 리소스 예외 모듈 |
 | `monitoring-storage` | **AVM + azurerm** | 내부에서 `storage-account`·`private-endpoint`(AVM 래퍼) 조합 + **`azurerm_role_assignment` 예외** |
 | `hub-vnet` | **azurerm 중심** (향후 AVM 점진 도입) | VNet/서브넷/NSG 등 복합·기존 계약. 전부 AVM만으로는 미정리 |
 | `spoke-vnet` | **azurerm 중심** | 피어링·Private DNS·NSG 등 복합 |

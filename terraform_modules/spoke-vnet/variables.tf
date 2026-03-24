@@ -30,6 +30,12 @@ variable "resource_group_name" {
   type        = string
 }
 
+variable "create_resource_group" {
+  description = "true면 Spoke RG를 이 모듈에서 생성, false면 기존 RG를 data source로 조회"
+  type        = bool
+  default     = true
+}
+
 #--------------------------------------------------------------
 # Virtual Network
 #--------------------------------------------------------------
@@ -50,7 +56,7 @@ variable "subnets" {
     service_endpoints                     = optional(list(string), [])
     private_endpoint_network_policies     = optional(string, "Disabled")
     private_link_service_network_policies = optional(string, "Disabled")
-    delegation                            = optional(object({
+    delegation = optional(object({
       name         = string
       service_name = string
       actions      = list(string)

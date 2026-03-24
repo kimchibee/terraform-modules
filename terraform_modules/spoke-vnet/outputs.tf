@@ -3,12 +3,12 @@
 #--------------------------------------------------------------
 output "resource_group_name" {
   description = "Spoke resource group name"
-  value       = azurerm_resource_group.spoke.name
+  value       = local.spoke_resource_group_name
 }
 
 output "resource_group_id" {
   description = "Spoke resource group ID"
-  value       = azurerm_resource_group.spoke.id
+  value       = local.spoke_resource_group_id
 }
 
 #--------------------------------------------------------------
