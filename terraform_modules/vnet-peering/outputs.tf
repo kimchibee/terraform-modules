@@ -4,10 +4,10 @@
 
 output "id" {
   description = "Peering 리소스 ID"
-  value       = azurerm_virtual_network_peering.main.id
+  value       = module.avm.resource_id
 }
 
 output "name" {
   description = "Peering 이름"
-  value       = azurerm_virtual_network_peering.main.name
+  value       = module.avm.name
 }

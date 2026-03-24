@@ -33,3 +33,5 @@ comparison-report.json
 
 # Shell scripts (test/check scripts)
 *.sh
+
+docs/

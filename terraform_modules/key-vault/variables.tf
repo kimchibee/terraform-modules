@@ -55,9 +55,9 @@ variable "public_network_access_enabled" {
 variable "network_acls" {
   description = "네트워크 ACL. null이면 기본 허용"
   type = object({
-    default_action             = string   # Deny / Allow
+    default_action             = string # Deny / Allow
     bypass                     = optional(list(string), ["AzureServices"])
-    virtual_network_subnet_ids  = optional(list(string), [])
+    virtual_network_subnet_ids = optional(list(string), [])
     ip_rules                   = optional(list(string), [])
   })
   default = null
