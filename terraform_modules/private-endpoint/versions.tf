@@ -1,12 +1,13 @@
 #-------------------------------------------------------------------------------
-# Private Endpoint 모듈 - Provider 요구 사항
+# Private Endpoint — AVM avm-res-network-privateendpoint
 #-------------------------------------------------------------------------------
 terraform {
-  required_version = ">= 1.5.0"
+  required_version = ">= 1.9.2"
+
   required_providers {
     azurerm = {
       source  = "hashicorp/azurerm"
-      version = ">= 3.0"
+      version = ">= 3.116.0, < 5.0.0"
     }
   }
 }

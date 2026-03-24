@@ -65,7 +65,7 @@ variable "network_rules" {
   type = object({
     default_action             = string # Deny / Allow
     bypass                     = optional(list(string), ["AzureServices"])
-    virtual_network_subnet_ids  = optional(list(string), [])
+    virtual_network_subnet_ids = optional(list(string), [])
     ip_rules                   = optional(list(string), [])
   })
   default = null

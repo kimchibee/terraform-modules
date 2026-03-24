@@ -1,8 +1,7 @@
 #-------------------------------------------------------------------------------
-# Storage Account 모듈 - 메인 리소스
-# 역할: Storage Account 1개 + 기본 설정. Private Endpoint/Blob 컨테이너는 별도 모듈 권장.
+# Storage Account — Azure Verified Module (AVM) 래퍼
+# 공식: Azure/avm-res-storage-storageaccount/azurerm
 #-------------------------------------------------------------------------------
-
 locals {
   common_tags = merge(var.tags, {
     Project     = var.project_name
@@ -29,7 +28,10 @@ locals {
   storage_account_name = var.storage_account_name != null ? var.storage_account_name : "${local.name_prefix_used}${random_string.suffix[0].result}"
 }
 
-resource "azurerm_storage_account" "main" {
+module "avm" {
+  source  = "Azure/avm-res-storage-storageaccount/azurerm"
+  version = "0.4.0"
+
   name                          = local.storage_account_name
   resource_group_name           = var.resource_group_name
   location                      = var.location
@@ -38,14 +40,13 @@ resource "azurerm_storage_account" "main" {
   min_tls_version               = var.min_tls_version
   public_network_access_enabled = var.public_network_access_enabled
   tags                          = local.common_tags
+  enable_telemetry              = false
+  shared_access_key_enabled     = true
 
-  dynamic "network_rules" {
-    for_each = var.network_rules != null ? [var.network_rules] : []
-    content {
-      default_action             = network_rules.value.default_action
-      bypass                     = network_rules.value.bypass
-      virtual_network_subnet_ids  = network_rules.value.virtual_network_subnet_ids
-      ip_rules                   = network_rules.value.ip_rules
-    }
-  }
+  network_rules = var.network_rules != null ? {
+    default_action             = var.network_rules.default_action
+    bypass                     = toset(coalesce(var.network_rules.bypass, ["AzureServices"]))
+    virtual_network_subnet_ids = toset(coalesce(var.network_rules.virtual_network_subnet_ids, []))
+    ip_rules                   = toset(coalesce(var.network_rules.ip_rules, []))
+  } : null
 }
