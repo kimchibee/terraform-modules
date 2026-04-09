@@ -3,17 +3,11 @@
 # 공식: Azure/avm-res-network-virtualnetwork/azurerm//modules/peering
 #-------------------------------------------------------------------------------
 
-data "azurerm_virtual_network" "local" {
-  name                = var.virtual_network_name
-  resource_group_name = var.resource_group_name
-}
-
 module "avm" {
-  source  = "Azure/avm-res-network-virtualnetwork/azurerm//modules/peering"
-  version = "0.17.1"
+  source = "../../vendor/terraform-azurerm-avm-res-network-virtualnetwork-0.17.1/modules/peering"
 
   name                      = var.name
-  parent_id                 = data.azurerm_virtual_network.local.id
+  parent_id                 = var.local_virtual_network_id
   remote_virtual_network_id = var.remote_virtual_network_id
 
   allow_virtual_network_access = var.allow_virtual_network_access

@@ -15,10 +15,7 @@ output "vnet_name" {
 
 output "vnet_address_space" {
   description = "VNet 주소 공간"
-  value = try(
-    module.avm.resource.output.properties.addressSpace.addressPrefixes,
-    module.avm.resource.body.properties.addressSpace.addressPrefixes
-  )
+  value       = module.avm.address_spaces
 }
 
 output "subnet_ids" {

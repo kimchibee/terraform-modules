@@ -54,8 +54,7 @@ locals {
 }
 
 module "avm" {
-  source  = "Azure/avm-res-compute-virtualmachine/azurerm"
-  version = "0.20.0"
+  source = "../../vendor/terraform-azurerm-avm-res-compute-virtualmachine-0.20.0"
 
   name                = var.name
   resource_group_name = var.resource_group_name

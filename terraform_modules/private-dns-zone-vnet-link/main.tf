@@ -2,12 +2,14 @@ variable "name" {
   type = string
 }
 
-variable "resource_group_name" {
-  type = string
-}
+variable "private_dns_zone_id" {
+  type        = string
+  description = "부모 Private DNS Zone의 리소스 ID. 호출 측에서 private-dns-zone 스택 remote_state로 주입한다."
 
-variable "private_dns_zone_name" {
-  type = string
+  validation {
+    condition     = can(regex("^/subscriptions/[^/]+/resourceGroups/[^/]+/providers/Microsoft\\.Network/privateDnsZones/[^/]+$", var.private_dns_zone_id))
+    error_message = "private_dns_zone_id must be a valid Private DNS Zone resource ID."
+  }
 }
 
 variable "virtual_network_id" {
@@ -24,15 +26,10 @@ variable "tags" {
   default = {}
 }
 
-data "azurerm_private_dns_zone" "zone" {
-  name                = var.private_dns_zone_name
-  resource_group_name = var.resource_group_name
-}
-
 module "avm" {
-  source = "git::https://github.com/Azure/terraform-azurerm-avm-res-network-privatednszone.git//modules/private_dns_virtual_network_link?ref=v0.5.0"
+  source = "../../vendor/terraform-azurerm-avm-res-network-privatednszone-0.5.0/modules/private_dns_virtual_network_link"
 
-  parent_id            = data.azurerm_private_dns_zone.zone.id
+  parent_id            = var.private_dns_zone_id
   name                 = var.name
   virtual_network_id   = var.virtual_network_id
   registration_enabled = var.registration_enabled

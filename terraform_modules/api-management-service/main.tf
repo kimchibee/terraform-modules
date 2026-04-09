@@ -30,8 +30,7 @@ variable "tags" {
 }
 
 module "avm" {
-  source  = "Azure/avm-res-apimanagement-service/azurerm"
-  version = "0.0.7"
+  source = "../../vendor/terraform-azurerm-avm-res-apimanagement-service-0.0.7"
 
   name                = var.name
   resource_group_name = var.resource_group_name

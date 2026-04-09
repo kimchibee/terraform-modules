@@ -29,8 +29,7 @@ locals {
 }
 
 module "avm" {
-  source  = "Azure/avm-res-storage-storageaccount/azurerm"
-  version = "0.4.0"
+  source = "../../vendor/terraform-azurerm-avm-res-storage-storageaccount-0.4.0"
 
   name                          = local.storage_account_name
   resource_group_name           = var.resource_group_name

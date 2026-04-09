@@ -8,14 +8,14 @@ variable "name" {
   type        = string
 }
 
-variable "resource_group_name" {
-  description = "로컬 VNet이 속한 리소스 그룹 이름"
+variable "local_virtual_network_id" {
+  description = "Peering을 붙일 로컬 VNet의 리소스 ID. 호출 측에서 vnet 스택 remote_state로 주입한다."
   type        = string
-}
 
-variable "virtual_network_name" {
-  description = "로컬 VNet 이름 (Peering을 붙일 VNet)"
-  type        = string
+  validation {
+    condition     = can(regex("^/subscriptions/[^/]+/resourceGroups/[^/]+/providers/Microsoft\\.Network/virtualNetworks/[^/]+$", var.local_virtual_network_id))
+    error_message = "local_virtual_network_id must be a valid Virtual Network resource ID."
+  }
 }
 
 variable "remote_virtual_network_id" {

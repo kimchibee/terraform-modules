@@ -28,6 +28,16 @@ variable "resource_group_name" {
   type        = string
 }
 
+variable "tenant_id" {
+  description = "Azure AD 테넌트 ID. 호출 측에서 azurerm_client_config 등으로 주입한다 (wrapper는 data block을 쓰지 않음)."
+  type        = string
+
+  validation {
+    condition     = can(regex("^[0-9a-fA-F-]{36}$", var.tenant_id))
+    error_message = "tenant_id must be a valid UUID."
+  }
+}
+
 variable "sku_name" {
   description = "SKU (standard / premium)"
   type        = string

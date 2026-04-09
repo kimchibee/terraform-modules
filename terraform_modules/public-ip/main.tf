@@ -31,8 +31,7 @@ variable "tags" {
 }
 
 module "avm" {
-  source  = "Azure/avm-res-network-publicipaddress/azurerm"
-  version = "0.2.1"
+  source = "../../vendor/terraform-azurerm-avm-res-network-publicipaddress-0.2.1"
 
   name                = var.name
   resource_group_name = var.resource_group_name

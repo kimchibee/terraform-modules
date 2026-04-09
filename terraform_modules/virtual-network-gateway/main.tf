@@ -2,8 +2,24 @@ variable "name" {
   type = string
 }
 
-variable "resource_group_name" {
-  type = string
+variable "resource_group_id" {
+  type        = string
+  description = "VPN Gateway가 속할 Resource Group의 리소스 ID. 호출 측에서 rg 스택 remote_state로 주입."
+
+  validation {
+    condition     = can(regex("^/subscriptions/[^/]+/resourceGroups/[^/]+$", var.resource_group_id))
+    error_message = "resource_group_id must be a valid Resource Group ID."
+  }
+}
+
+variable "virtual_network_id" {
+  type        = string
+  description = "VPN Gateway가 속한 Virtual Network의 리소스 ID. 호출 측에서 vnet 스택 remote_state로 주입."
+
+  validation {
+    condition     = can(regex("^/subscriptions/[^/]+/resourceGroups/[^/]+/providers/Microsoft\\.Network/virtualNetworks/[^/]+$", var.virtual_network_id))
+    error_message = "virtual_network_id must be a valid Virtual Network resource ID."
+  }
 }
 
 variable "location" {
@@ -57,25 +73,15 @@ variable "tags" {
   default = {}
 }
 
-data "azurerm_resource_group" "parent" {
-  name = var.resource_group_name
-}
-
-locals {
-  # /.../virtualNetworks/<name>/subnets/<subnet-name> -> /.../virtualNetworks/<name>
-  virtual_network_id = regexreplace(var.subnet_id, "(?i)(.*/virtualNetworks/[^/]+)/subnets/[^/]+", "$1")
-}
-
 module "avm" {
-  source  = "Azure/avm-ptn-vnetgateway/azurerm"
-  version = "0.10.3"
+  source = "../../vendor/terraform-azurerm-avm-ptn-vnetgateway-0.10.3"
 
-  parent_id = data.azurerm_resource_group.parent.id
+  parent_id = var.resource_group_id
   name      = var.name
   location  = var.location
   tags      = var.tags
 
-  virtual_network_id                = local.virtual_network_id
+  virtual_network_id                = var.virtual_network_id
   virtual_network_gateway_subnet_id = var.subnet_id
 
   vpn_type                  = var.vpn_type

@@ -4,8 +4,7 @@
 # 버전 변경 시 아래 version 만 수정 후 이 레포 태그 갱신
 #-------------------------------------------------------------------------------
 module "avm" {
-  source  = "Azure/avm-res-resources-resourcegroup/azurerm"
-  version = "0.1.0"
+  source = "../../vendor/terraform-azurerm-avm-res-resources-resourcegroup-0.1.0"
 
   name     = var.name
   location = var.location

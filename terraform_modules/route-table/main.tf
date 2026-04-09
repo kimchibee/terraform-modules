@@ -3,8 +3,7 @@
 # routes_legacy_mode = true 이면 경로는 azurerm_route 로 관리 (state 이전 용이)
 #-------------------------------------------------------------------------------
 module "avm" {
-  source  = "Azure/avm-res-network-routetable/azurerm"
-  version = "0.5.0"
+  source = "../../vendor/terraform-azurerm-avm-res-network-routetable-0.5.0"
 
   location            = var.location
   name                = var.name

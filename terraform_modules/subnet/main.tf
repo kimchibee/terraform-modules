@@ -2,12 +2,14 @@ variable "name" {
   type = string
 }
 
-variable "resource_group_name" {
-  type = string
-}
+variable "virtual_network_id" {
+  type        = string
+  description = "부모 Virtual Network의 리소스 ID. 호출 측에서 vnet 스택 remote_state로 주입한다."
 
-variable "virtual_network_name" {
-  type = string
+  validation {
+    condition     = can(regex("^/subscriptions/[^/]+/resourceGroups/[^/]+/providers/Microsoft\\.Network/virtualNetworks/[^/]+$", var.virtual_network_id))
+    error_message = "virtual_network_id must be a valid Virtual Network resource ID."
+  }
 }
 
 variable "address_prefixes" {
@@ -43,17 +45,11 @@ variable "delegation" {
   default = null
 }
 
-data "azurerm_virtual_network" "parent" {
-  name                = var.virtual_network_name
-  resource_group_name = var.resource_group_name
-}
-
 module "avm" {
-  source  = "Azure/avm-res-network-virtualnetwork/azurerm//modules/subnet"
-  version = "0.17.1"
+  source = "../../vendor/terraform-azurerm-avm-res-network-virtualnetwork-0.17.1/modules/subnet"
 
   name      = var.name
-  parent_id = data.azurerm_virtual_network.parent.id
+  parent_id = var.virtual_network_id
 
   address_prefixes                              = var.address_prefixes
   private_endpoint_network_policies             = var.private_endpoint_network_policies

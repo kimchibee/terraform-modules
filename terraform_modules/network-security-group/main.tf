@@ -29,7 +29,7 @@ locals {
 
 module "avm" {
   count  = var.enabled ? 1 : 0
-  source = "Azure/avm-res-network-networksecuritygroup/azurerm"
+  source = "../../vendor/terraform-azurerm-avm-res-network-networksecuritygroup-0.5.1"
 
   name                = var.name
   location            = var.location

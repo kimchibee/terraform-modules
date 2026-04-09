@@ -3,8 +3,7 @@
 # 공식: Azure/avm-res-network-firewallpolicy/azurerm (Terraform Registry)
 #-------------------------------------------------------------------------------
 module "avm" {
-  source  = "Azure/avm-res-network-firewallpolicy/azurerm"
-  version = "0.3.4"
+  source = "../../vendor/terraform-azurerm-avm-res-network-firewallpolicy-0.3.4"
 
   location            = var.location
   name                = var.name

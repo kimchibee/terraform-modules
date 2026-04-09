@@ -3,16 +3,13 @@
 # 공식: Azure/avm-res-keyvault-vault/azurerm (Terraform Registry)
 # 버전 변경 시 아래 version 만 수정 후 이 레포 태그 갱신
 #-------------------------------------------------------------------------------
-data "azurerm_client_config" "current" {}
-
 module "avm" {
-  source  = "Azure/avm-res-keyvault-vault/azurerm"
-  version = "0.10.2"
+  source = "../../vendor/terraform-azurerm-avm-res-keyvault-vault-0.10.2"
 
   name                          = var.name
   location                      = var.location
   resource_group_name           = var.resource_group_name
-  tenant_id                     = data.azurerm_client_config.current.tenant_id
+  tenant_id                     = var.tenant_id
   sku_name                      = var.sku_name
   soft_delete_retention_days    = var.soft_delete_retention_days
   purge_protection_enabled      = var.purge_protection_enabled

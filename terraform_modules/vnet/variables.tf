@@ -19,9 +19,14 @@ variable "location" {
   type        = string
 }
 
-variable "resource_group_name" {
-  description = "대상 Resource Group 이름 (호출 측에서 생성 후 전달)"
+variable "resource_group_id" {
+  description = "대상 Resource Group ID (호출 측에서 생성 후 전달). AVM 0.17.x parent_id 패턴."
   type        = string
+
+  validation {
+    condition     = can(regex("^/subscriptions/[^/]+/resourceGroups/[^/]+$", var.resource_group_id))
+    error_message = "resource_group_id must be a valid Resource Group ID."
+  }
 }
 
 variable "vnet_name" {

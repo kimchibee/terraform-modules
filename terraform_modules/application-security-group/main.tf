@@ -6,7 +6,7 @@
 
 module "avm" {
   count  = var.enabled ? 1 : 0
-  source = "Azure/avm-res-network-applicationsecuritygroup/azurerm"
+  source = "../../vendor/terraform-azurerm-avm-res-network-applicationsecuritygroup-0.1.1"
 
   name                = var.name
   location            = var.location
